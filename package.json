@@ -4,7 +4,8 @@
   "description": "爬取豆瓣TOP250电影的信息 [电影地址](https://movie.douban.com/top250)",
   "main": "index.js",
   "dependencies": {
-    "cheerio": "^1.0.0-rc.5"
+    "cheerio": "^1.0.0-rc.5",
+    "log4js": "^6.3.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

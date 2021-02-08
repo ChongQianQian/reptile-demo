@@ -3,15 +3,15 @@ const cheerio = require("cheerio");
 const fs = require("fs");
 
 https.get("https://movie.douban.com/top250", (res) => {
-  let html = ""; //分段返回的 自己拼接
+  let html = ""; //分段返回的 返回的是数据流
 
   res.on("data", (chunk) => {
-    // 有数据产生的时候 拼接
+    // 监听有数据产生的时候 拼接
     html += chunk;
   });
 
   res.on("end", () => {
-    // 拼接完成
+    console.log("html",html)
     const $ = cheerio.load(html);
     let allFilms = [];
     $("li .item").each(function () {
