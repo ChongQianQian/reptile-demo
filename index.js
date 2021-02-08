@@ -1,19 +1,17 @@
-// 请求 url - > html（信息）  -> 解析html
 const https = require("https");
 const cheerio = require("cheerio");
 const fs = require("fs");
 
-// 请求 top250
-// 浏览器输入一个 url, get
-https.get("https://movie.douban.com/top250", function (res) {  
-  // 分段返回的 自己拼接
-  let html = "";
-  // 有数据产生的时候 拼接
-  res.on("data", function (chunk) {
+https.get("https://movie.douban.com/top250", (res) => {
+  let html = ""; //分段返回的 自己拼接
+
+  res.on("data", (chunk) => {
+    // 有数据产生的时候 拼接
     html += chunk;
   });
-  // 拼接完成
-  res.on("end", function () {
+
+  res.on("end", () => {
+    // 拼接完成
     const $ = cheerio.load(html);
     let allFilms = [];
     $("li .item").each(function () {
@@ -23,7 +21,7 @@ https.get("https://movie.douban.com/top250", function (res) {
       const title = $(".title", this).text();
       const star = $(".rating_num", this).text();
       const pic = $(".pic img", this).attr("src");
-      
+
       // 存 数据库
       // 没有数据库存成一个json文件 fs
       allFilms.push({
@@ -32,15 +30,14 @@ https.get("https://movie.douban.com/top250", function (res) {
         pic,
       });
     });
-    // 把数组写入json里面
-    fs.writeFile("./films.json", JSON.stringify(allFilms), function (err) {
+
+    fs.writeFile("./films.json", JSON.stringify(allFilms), (err) => {
       if (!err) {
         console.log("文件写入完毕");
       }
     });
 
-    // 图片下载一下
-    downloadImage(allFilms);
+    downloadImage(allFilms); // 图片下载一下
   });
 });
 
@@ -48,10 +45,10 @@ function downloadImage(allFilms) {
   for (let i = 0; i < allFilms.length; i++) {
     // 请求 -> 拿到内容
     // fs.writeFile('./xx.png','内容')
-    
+
     const picUrl = allFilms[i].pic;
     https.get(picUrl, function (res) {
-      res.setEncoding("binary");//从可读流读取的数据设置字符编码
+      res.setEncoding("binary"); //从可读流读取的数据设置字符编码
 
       let str = "";
       res.on("data", function (chunk) {
@@ -62,8 +59,8 @@ function downloadImage(allFilms) {
         fs.writeFile(`./images/${i}.png`, str, "binary", function (err) {
           if (!err) {
             console.log(`第${i}张图片下载成功`);
-          }else{
-            console.log(`第${i}张图片下载失败`,err);
+          } else {
+            console.log(`第${i}张图片下载失败`, err);
           }
         });
       });
